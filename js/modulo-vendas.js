@@ -151,4 +151,15 @@ export function compartilharVenda(index, onFallback) {
 
 export function exportarVendasCSV() {
   if (estado.vendas.length === 0) {
-    return { ok
+    return { ok: false, msg: 'Nenhuma venda registrada.' };
+  }
+
+  let csv = '\uFEFFData;Cliente;Produtos;Subtotal;Desconto;Total Final;Observacao\n';
+  estado.vendas.forEach(v => {
+    const itens = v.itens.map(i => `${i.qtd}x ${i.prod} (R$ ${formatarBR(i.val)})`).join(' | ');
+    csv += `"${v.data}";"${v.cliente}";"${itens}";"${formatarBR(v.sub)}";"${formatarBR(v.desc)}";"${formatarBR(v.tot)}";"${v.obs || ''}"\n`;
+  });
+
+  baixarArquivo(csv, 'vendas.csv', 'text/csv;charset=utf-8;');
+  return { ok: true, msg: 'Planilha de vendas exportada!' };
+}
