@@ -1,1 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sistema de Vendas - Completo</title>
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
 
+<div class="container">
+  <h2>Sistema de Vendas</h2>
+  <div id="status"></div>
+
+  <div class="tabs">
+    <button type="button" class="tab-btn active" data-aba="aba-vendas">1. Vendas</button>
+    <button type="button" class="tab-btn" data-aba="aba-clientes">2. Clientes</button>
+    <button type="button" class="tab-btn" data-aba="aba-produtos">3. Produtos</button>
+  </div>
+
+  <!-- ABA 1: VENDAS -->
+  <div id="aba-vendas" class="aba active">
+    <div class="totais-topo">
+      <div class="card-topo">Total Vendido<strong id="total-geral-vendido">R$ 0,00</strong></div>
+      <div class="card-topo desc">Total Descontos<strong id="total-geral-desconto">R$ 0,00</strong></div>
+    </div>
+
+    <div id="banner-edit-venda" class="edit-banner">
+      <span>Editando pedido existente</span>
+      <button type="button" class="btn-del" id="btn-banner-cancelar-venda">Cancelar</button>
+    </div>
+
+    <div class="campo">
+      <label for="busca-cliente">Buscar Cliente (Nome, CPF ou CNPJ):</label>
+      <input type="text" id="busca-cliente" placeholder="Digite para filtrar...">
+      <div id="sugestoes-clientes" class="sugestoes"></div>
+    </div>
+    <div id="cliente-selecionado-box" class="selecionado-badge" style="display:none;">
+      <span id="cliente-selecionado-texto"></span>
+      <button type="button" class="btn-del" id="btn-trocar-cliente">Trocar</button>
+    </div>
+
+    <div class="campo">
+      <label for="busca-produto">Buscar Produto:</label>
+      <input type="text" id="busca-produto" placeholder="Digite o nome do produto...">
+      <div id="sugestoes-produtos" class="sugestoes"></div>
+    </div>
+    <div id="produto-selecionado-box" class="selecionado-badge" style="display:none;">
+      <span id="produto-selecionado-texto"></span>
+      <button type="button" class="btn-del" id="btn-trocar-produto">Trocar</button>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="qtd">Quantidade:</label>
+        <input type="number" id="qtd" inputmode="numeric" value="1" min="1">
+      </div>
+      <div>
+        <label for="valor">Valor Unit. (R$):</label>
+        <input type="text" id="valor" class="input-moeda" inputmode="numeric" value="0,00">
+      </div>
+    </div>
+
+    <button type="button" class="btn-add" id="btn-add-item">+ Adicionar Item ao Pedido</button>
+
+    <div id="lista-carrinho"></div>
+
+    <div class="resumo">
+      <div class="row">
+        <div>
+          <label for="desconto">Desconto (R$):</label>
+          <input type="text" id="desconto" class="input-moeda" inputmode="numeric" value="0,00">
+        </div>
+        <div>
+          <label for="obs">Observação:</label>
+          <input type="text" id="obs" placeholder="Ex: Pix, entrega...">
+        </div>
+      </div>
+
+      <div style="font-size: 14px; margin: 10px 0; line-height: 1.5;">
+        Subtotal: <strong>R$ <span id="sub-pedido">0,00</span></strong> |
+        Desconto: <strong>R$ <span id="desc-pedido">0,00</span></strong><br>
+        Total Final: <strong style="color: #28a745; font-size: 20px;">R$ <span id="tot-pedido">0,00</span></strong>
+      </div>
+
+      <button type="button" id="btn-salvar-venda">Finalizar e Registrar Venda</button>
+      <button type="button" id="btn-cancelar-venda" class="btn-cancel" style="display:none;">Cancelar Edição</button>
+    </div>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+
+    <h3>Vendas Registradas</h3>
+    <div class="row">
+      <div><button type="button" class="btn-export" id="btn-exportar-vendas">Exportar Vendas (Planilha CSV)</button></div>
+    </div>
+    <div id="lista-vendas"></div>
+  </div>
+
+  <!-- ABA 2: CADASTRO DE CLIENTES -->
+  <div id="aba-clientes" class="aba">
+    <h3 id="titulo-form-cliente">Novo Cliente</h3>
+    <div id="banner-edit-cliente" class="edit-banner">
+      <span>Editando cadastro de cliente</span>
+      <button type="button" class="btn-del" id="btn-banner-cancelar-cliente">Cancelar</button>
+    </div>
+
+    <div class="campo">
+      <label for="cli-nome">Nome Completo ou Razão Social: *</label>
+      <input type="text" id="cli-nome" placeholder="Ex: Maria Oliveira ou Empresa LTDA">
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="cli-cpf">CPF ou CNPJ: *</label>
+        <input type="text" id="cli-cpf" inputmode="numeric" placeholder="CPF ou CNPJ" maxlength="18">
+      </div>
+      <div>
+        <label for="cli-tel">Telefone / WhatsApp:</label>
+        <input type="text" id="cli-tel" inputmode="tel" placeholder="(00) 00000-0000" maxlength="15">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="cli-email">E-mail:</label>
+      <input type="email" id="cli-email" placeholder="cliente@email.com">
+    </div>
+
+    <div class="row">
+      <div style="flex: 1;">
+        <label for="cli-cep">CEP:</label>
+        <input type="text" id="cli-cep" inputmode="numeric" placeholder="00000-000" maxlength="9">
+      </div>
+      <div style="flex: 2;">
+        <label for="cli-rua">Rua e Número:</label>
+        <input type="text" id="cli-rua" placeholder="Ex: Rua das Flores, 123">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="cli-bairro">Bairro:</label>
+        <input type="text" id="cli-bairro" placeholder="Centro">
+      </div>
+      <div>
+        <label for="cli-cidade">Cidade / UF:</label>
+        <input type="text" id="cli-cidade" placeholder="São Luís - MA">
+      </div>
+    </div>
+
+    <button type="button" id="btn-salvar-cliente">Salvar Cliente</button>
+    <button type="button" id="btn-cancelar-cliente" class="btn-cancel" style="display:none;">Cancelar Edição</button>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+
+    <h3>Clientes Cadastrados</h3>
+    <div class="row">
+      <div><button type="button" class="btn-export" id="btn-exportar-clientes">Exportar Clientes (CSV)</button></div>
+      <div><button type="button" class="btn-import" id="btn-gatilho-import-clientes">Importar Clientes (CSV)</button></div>
+    </div>
+    <input type="file" id="input-import-clientes" accept=".csv" style="display:none;">
+
+    <div id="lista-clientes-cards"></div>
+  </div>
+
+  <!-- ABA 3: CADASTRO DE PRODUTOS E BACKUP -->
+  <div id="aba-produtos" class="aba">
+    <h3 id="titulo-form-produto">Novo Produto</h3>
+    <div id="banner-edit-produto" class="edit-banner">
+      <span>Editando produto</span>
+      <button type="button" class="btn-del" id="btn-banner-cancelar-produto">Cancelar</button>
+    </div>
+
+    <div class="campo">
+      <label for="prod-nome">Nome do Produto: *</label>
+      <input type="text" id="prod-nome" placeholder="Ex: TENÉBRIO MOLITOR DESIDRATADO 50G">
+    </div>
+    <button type="button" id="btn-salvar-produto">Salvar Produto</button>
+    <button type="button" id="btn-cancelar-produto" class="btn-cancel" style="display:none;">Cancelar Edição</button>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+
+    <h3>Produtos Disponíveis</h3>
+    <div class="row">
+      <div><button type="button" class="btn-export" id="btn-exportar-produtos">Exportar Produtos (CSV)</button></div>
+      <div><button type="button" class="btn-import" id="btn-gatilho-import-produtos">Importar Produtos (CSV)</button></div>
+    </div>
+    <input type="file" id="input-import-produtos" accept=".csv" style="display:none;">
+
+    <div id="lista-produtos-cards"></div>
+
+    <!-- BACKUP COMPLETO DO SISTEMA -->
+    <div class="backup-box">
+      <h3 style="margin-bottom: 6px;">Backup Completo (Troca de Celular)</h3>
+      <p style="font-size: 12px; color: #555; margin: 0 0 10px 0;">Salve ou restaure todas as vendas, clientes e produtos de uma só vez.</p>
+      <div class="row" style="margin-bottom: 0;">
+        <div><button type="button" class="btn-backup" id="btn-exportar-backup">Salvar Backup (.JSON)</button></div>
+        <div><button type="button" class="btn-import" id="btn-gatilho-import-backup">Restaurar Backup</button></div>
+      </div>
+      <input type="file" id="input-import-backup" accept=".json" style="display:none;">
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
